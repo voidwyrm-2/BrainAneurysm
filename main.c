@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 int Get(int key, int list[][2], int *err)
 {
@@ -27,7 +28,7 @@ int GetNextOpen(int list[][2])
     return 0;
 }
 
-const int maximumFileLength = 1000;
+// const int maximumFileLength = 1000;
 
 void interpreter(char text[])
 {
@@ -76,12 +77,12 @@ void interpreter(char text[])
         return;
     }
 
-    int input = 0;
-
     int col = 0;
     int ln = 0;
     while (col < (int)strlen(text))
     {
+        printf("%d('%c'), ptr: %d, b1: %d, b2: %d, b3: %d\n", col, text[col], pointer, bytes[0], bytes[1], bytes[2]);
+
         switch (text[col])
         {
         case '+':
@@ -134,20 +135,29 @@ void interpreter(char text[])
             break;
         case ',':
             printf("please input a number between 0-255, inclusive\n");
-            scanf("%d", &input);
-            if (input > 255)
+            int *input;
+            input = (int *)malloc(sizeof(int));
+            if (input == NULL)
+            {
+                printf("Memory for input was not allocated.\n");
+                exit(0);
+            }
+            scanf("%d", input);
+            if (*input > 255)
             {
                 bytes[pointer] = 255;
             }
-            else if (input < 0)
+            else if (*input < 0)
             {
                 bytes[pointer] = 0;
             }
             else
             {
-                bytes[pointer] = input;
+                bytes[pointer] = *input;
             }
-            input = 0;
+
+            free(input);
+
             col++;
             break;
         case '[':
